@@ -1,0 +1,1422 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta name="robots" content="noindex, nofollow">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nutzerstudie: KI-Assistenz für Gesetze</title>
+  <script async src="https://tally.so/widgets/embed.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f5f4ef;
+      --ink: #18181b;
+      --ink-soft: #5b5b60;
+      --accent: #18181b;
+      --yellow: #fce29b;
+      --rule: #e2e0d8;
+      --c1: #eef0d0; --c1-b: #c9d46a; --c1-t: #5a5f1f;
+      --c2: #f0eac9; --c2-b: #d9c766; --c2-t: #6b5a1a;
+      --c3: #c3d4ba; --c3-b: #7a9e6e; --c3-t: #33472c;
+      --c4: #dcefd2; --c4-b: #8fc97a; --c4-t: #2c5a1f;
+      --c5: #bfe1ec; --c5-b: #4fa8c0; --c5-t: #1c4a58;
+      --c6: #ddb0ee; --c6-b: #b15fe0; --c6-t: #5c1f78;
+    }
+    * { box-sizing: border-box; }
+    html { background: var(--bg); }
+    body {
+      font-family: 'Hanken Grotesk', Arial, sans-serif;
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 36px 18px 60px;
+      background: var(--bg);
+      color: var(--ink);
+      font-size: 16px;
+      line-height: 1.65;
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+    }
+    body::before {
+      content: "";
+      position: absolute;
+      top: -120px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 480px;
+      height: 320px;
+      max-width: 140vw;
+      background:
+        radial-gradient(circle at 20% 30%, var(--c5) 0%, transparent 55%),
+        radial-gradient(circle at 75% 25%, var(--c6) 0%, transparent 55%),
+        radial-gradient(circle at 50% 70%, var(--c4) 0%, transparent 55%);
+      filter: blur(38px);
+      opacity: 0.55;
+      z-index: 0;
+      pointer-events: none;
+    }
+    header, .page, .progress {
+      position: relative;
+      z-index: 1;
+    }
+    .mobile-notice {
+      background: rgba(79, 168, 192, 0.15);
+      color: var(--ink);
+      font-size: 14px;
+      font-weight: 700;
+      text-align: left;
+      padding: 10px 14px;
+      border-radius: 4px;
+      border-left: 4px solid var(--c5-b);
+      margin-bottom: 20px;
+    }
+    .mobile-notice-red {
+      background: rgba(220, 38, 38, 0.1);
+      border-left-color: #dc2626;
+    }
+    .eyebrow {
+      font-family: 'Hanken Grotesk', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink);
+      margin-bottom: 14px;
+      display: inline-block;
+      padding: 4px 10px 4px 0;
+      border-bottom: 4px solid var(--yellow);
+    }
+    h1 {
+      font-family: 'Hanken Grotesk', sans-serif;
+      font-weight: 800;
+      font-size: 30px;
+      line-height: 1.08;
+      margin: 0 0 28px;
+      letter-spacing: -0.03em;
+    }
+    /* Fortschritts-Punkte */
+    .progress {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 28px;
+    }
+    .dot {
+      height: 6px;
+      flex: 1;
+      border-radius: 999px;
+      background: var(--rule);
+      transition: background 0.25s ease;
+    }
+    .dot.active { background: var(--dot-color, var(--ink)); }
+    .dot.visited { background: var(--dot-color, var(--ink)); opacity: 0.4; }
+
+    /* Seiten */
+    .page {
+      display: none;
+      animation: fade-up 0.35s ease;
+    }
+    .page.active { display: block; }
+    @keyframes fade-up {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .page { animation: none; }
+    }
+
+    .page-label {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      font-family: 'Hanken Grotesk', sans-serif;
+      font-size: 16px;
+      font-weight: 800;
+      border: none;
+      margin-bottom: 14px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    }
+    h2 {
+      font-family: 'Hanken Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 21px;
+      margin: 0 0 12px;
+      letter-spacing: -0.01em;
+    }
+    p { margin: 0 0 16px; color: var(--ink-soft); font-size: 15px; }
+    .ds-block {
+      padding-top: 16px;
+      border-top: 1px solid var(--rule);
+    }
+    .ds-block:first-of-type {
+      padding-top: 0;
+      border-top: none;
+    }
+    .ds-block p:last-child {
+      margin-bottom: 16px;
+    }
+    p:last-child { margin-bottom: 0; }
+    .mini-heading {
+      font-family: 'Hanken Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 12px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--ink);
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .mini-heading::before {
+      content: "";
+      display: inline-block;
+      width: 14px;
+      height: 2px;
+      background: var(--ink-soft);
+      flex-shrink: 0;
+    }
+    p.mini-heading + p {
+      margin-top: 0;
+    }
+    strong { color: var(--ink); font-weight: 600; }
+    .step-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .step-row {
+      padding-top: 16px;
+      border-top: 1px solid var(--rule);
+    }
+    .step-row:first-child {
+      padding-top: 0;
+      border-top: none;
+    }
+    .step-row p:last-child {
+      margin-bottom: 0;
+    }
+    .howto-toggle summary {
+      cursor: pointer;
+      font-size: 13px;
+      color: var(--ink-soft);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      list-style: none;
+      margin-top: 4px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .howto-toggle summary::marker {
+      content: none;
+    }
+    .howto-toggle summary::-moz-list-bullet {
+      list-style-type: none;
+    }
+    .howto-toggle summary::before {
+      content: "▸";
+      display: inline-block;
+      color: var(--c5-b);
+      font-size: 10px;
+      text-decoration: none;
+      transition: transform 0.2s ease;
+    }
+    .howto-toggle[open] summary::before {
+      transform: rotate(90deg);
+    }
+    .howto-toggle summary::-webkit-details-marker {
+      display: none;
+    }
+    .howto-toggle summary:hover {
+      color: var(--ink);
+    }
+    .howto-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 8px;
+    }
+    .howto-option {
+      flex: 1;
+      min-width: 130px;
+      background: rgba(24,24,27,0.03);
+      border: 1px solid var(--rule);
+      border-radius: 10px;
+      padding: 10px;
+      text-align: center;
+    }
+    .howto-option img {
+      margin: 0 0 6px;
+    }
+    .howto-option span {
+      display: block;
+      font-size: 12px;
+      color: var(--ink-soft);
+      font-weight: 600;
+    }
+    .reassurance {
+      font-size: 13px;
+      font-style: italic;
+      color: var(--ink-soft);
+      background: rgba(24,24,27,0.03);
+      border: 1px solid var(--rule);
+      border-radius: 10px;
+      padding: 10px 12px;
+      margin-top: 6px;
+      margin-bottom: 18px;
+    }
+    .tag-wichtig {
+      display: inline-block;
+      background: rgba(220, 38, 38, 0.15);
+      color: #dc2626;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      padding: 2px 7px;
+      border-radius: 5px;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+    .tag-hinweis {
+      display: inline-block;
+      background: rgba(79, 168, 192, 0.2);
+      color: var(--c5-b);
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      padding: 2px 7px;
+      border-radius: 5px;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+    .ds-scrollbox {
+      border: 1px solid var(--rule);
+      border-radius: 12px;
+      padding: 16px 14px;
+      margin-bottom: 20px;
+      background: rgba(24,24,27,0.02);
+    }
+    .ds-card-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .ds-arrow {
+      background: none;
+      border: none;
+      color: var(--ink-soft);
+      font-size: 14px;
+      font-family: 'Hanken Grotesk', sans-serif;
+      line-height: 1;
+      padding: 4px 0;
+      cursor: pointer;
+      border-radius: 6px;
+    }
+    .ds-arrow:hover {
+      color: var(--ink);
+      background: rgba(24,24,27,0.04);
+    }
+    .stepper-next-fixed {
+      position: fixed;
+      right: 18px;
+      bottom: calc(18px + env(safe-area-inset-bottom));
+      margin: 0 !important;
+      width: auto !important;
+      padding: 12px 24px !important;
+      z-index: 40;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+    }
+    .ds-next-final {
+      font-size: 16px !important;
+      padding: 12px 28px !important;
+      font-weight: 800;
+    }
+    .ds-line-row {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 26px;
+      margin-bottom: 16px;
+    }
+    .ds-line-track {
+      position: absolute;
+      left: 11px;
+      right: 11px;
+      top: 50%;
+      transform: translateY(-50%);
+      height: 3px;
+      border-radius: 2px;
+      background: var(--rule);
+    }
+    .ds-line-fill {
+      position: absolute;
+      left: 11px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 0;
+      height: 3px;
+      border-radius: 2px;
+      background: var(--c5-b);
+      transition: width 0.3s ease;
+    }
+    .ds-dot {
+      position: relative;
+      z-index: 1;
+      width: 22px;
+      height: 22px;
+      flex: none;
+      border-radius: 50%;
+      background: #fff;
+      border: 2px solid var(--rule);
+      color: var(--ink-soft);
+      font-size: 11px;
+      font-weight: 700;
+      font-family: 'Hanken Grotesk', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .ds-dot.active {
+      background: var(--c5-b);
+      border-color: var(--c5-b);
+      color: #fff;
+      transform: scale(1.08);
+    }
+    .ds-dot.passed {
+      background: var(--c5-b);
+      border-color: var(--c5-b);
+      color: #fff;
+    }
+    .ds-card-viewport {
+      overflow: hidden;
+      min-height: 110px;
+    }
+    .ds-card-track {
+      display: flex;
+      transition: transform 0.3s ease;
+    }
+    .ds-card-item {
+      flex: 0 0 100%;
+      width: 100%;
+    }
+    .ds-card-item p:not(.mini-heading) {
+      font-size: 14px;
+      color: var(--ink-soft);
+      margin: 4px 0 0;
+    }
+    .page4-top-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .page4-top-row .mini-guide-box {
+      flex: 1 1 auto;
+      min-width: 0;
+      margin-bottom: 0;
+    }
+    .page4-top-row .nav-button {
+      flex-shrink: 0;
+      margin-top: 0;
+    }
+    .anleitung-box {
+      background: #fff;
+      border: none;
+      border-radius: 20px;
+      padding: 18px 18px 16px;
+      margin-bottom: 20px;
+      box-shadow: 0 10px 28px rgba(24,24,27,0.09), 0 2px 6px rgba(24,24,27,0.06);
+    }
+    .anleitung-box p {
+      margin-bottom: 10px;
+    }
+    .anleitung-box p:last-child {
+      margin-bottom: 0;
+    }
+    .sub-heading {
+      font-family: 'Hanken Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 12px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--ink);
+      margin: 0 0 10px;
+    }
+    .howto-image {
+      display: block;
+      max-width: 100%;
+      height: auto;
+      border-radius: 10px;
+      border: 1px solid var(--rule);
+      margin: 10px 0 14px;
+    }
+    .mini-stepper {
+      display: flex;
+      flex-direction: column;
+    }
+    .stepper-stable {
+      min-height: 300px;
+    }
+    .stepper-dots {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 16px;
+    }
+    .stepper-dot {
+      height: 5px;
+      flex: 1;
+      border-radius: 999px;
+      background: var(--rule);
+      transition: background 0.2s ease;
+      cursor: pointer;
+      border: none;
+      padding: 0;
+      font-size: 0;
+    }
+    .stepper-dot.active {
+      background: var(--c3-b);
+    }
+    .stepper-dot.done {
+      background: var(--c3-b);
+      opacity: 0.5;
+    }
+    .stepper-card {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      animation: fade-up 0.3s ease;
+    }
+    .stepper-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 16px;
+    }
+    .stepper-nav-fixed {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      margin: 0;
+      padding: 10px 18px calc(10px + env(safe-area-inset-bottom));
+      background: linear-gradient(to top, var(--bg) 60%, transparent);
+      z-index: 40;
+    }
+    .mini-stepper-compact .stepper-prev,
+    .mini-stepper-compact .stepper-next-btn {
+      width: auto;
+      padding: 6px 14px;
+      font-size: 13px;
+      margin-top: 0;
+      box-shadow: none;
+    }
+    .stepper-nav:first-child {
+      margin-top: 0;
+      margin-bottom: 16px;
+    }
+    .stepper-nav .stepper-next-btn {
+      margin-top: 0;
+      width: auto;
+      padding: 10px 22px;
+    }
+    .anleitung-compact .step-list {
+      gap: 10px;
+    }
+    .anleitung-compact .step-row {
+      padding-top: 10px;
+    }
+    .anleitung-compact .mini-heading {
+      margin-bottom: 2px;
+    }
+    .howto-inline {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 6px;
+      flex-wrap: wrap;
+    }
+    .howto-image-compact {
+      height: 30px;
+      width: auto;
+      border-radius: 6px;
+      border: 1px solid var(--rule);
+      flex-shrink: 0;
+    }
+    .howto-image-wide {
+      display: block;
+      height: auto;
+      max-width: 100%;
+      width: 200px;
+      margin-top: 8px;
+    }
+    .howto-image-tiny {
+      height: 24px;
+    }
+    .howto-caption {
+      font-size: 12px;
+      color: var(--ink-soft);
+      line-height: 1.3;
+    }
+    .howto-toggle-simple {
+      margin-top: 6px;
+      text-align: left;
+    }
+    .howto-toggle-simple summary {
+      cursor: pointer;
+      font-size: 13px;
+      color: var(--ink-soft);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      list-style: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 5px;
+      width: fit-content;
+    }
+    .howto-toggle-simple summary::before {
+      content: "▸";
+      display: inline-block;
+      color: var(--c5-b);
+      font-size: 11px;
+      text-decoration: none;
+      transition: transform 0.2s ease;
+    }
+    .howto-toggle-simple[open] summary::before {
+      transform: rotate(90deg);
+    }
+    .howto-toggle-simple summary::-webkit-details-marker {
+      display: none;
+    }
+    .howto-toggle-simple summary::marker {
+      content: none;
+    }
+    .howto-toggle-simple[open] summary {
+      margin-bottom: 6px;
+    }
+    .howto-image-small {
+      max-width: 60px;
+    }
+
+    p.lead {
+      font-family: 'Hanken Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 18px;
+      color: var(--ink);
+      margin-bottom: 12px;
+    }
+    .time-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--ink-soft);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-top: 10px;
+    }
+    .time-badge::before {
+      content: "";
+      display: inline-block;
+      width: 14px;
+      height: 2px;
+      background: var(--ink-soft);
+      flex-shrink: 0;
+    }
+    .mini-guide-box {
+      background: rgba(24,24,27,0.03);
+      border: 1px solid var(--rule);
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-bottom: 12px;
+    }
+    .mini-guide-box summary {
+      cursor: pointer;
+      list-style: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .mini-guide-box summary::-webkit-details-marker {
+      display: none;
+    }
+    .mini-guide-box summary.mini-heading::before {
+      content: none;
+    }
+    .pretest-list {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--ink-soft);
+      font-size: 15px;
+    }
+    .pretest-list li {
+      margin-bottom: 4px;
+    }
+    .pretest-list li:last-child {
+      margin-bottom: 0;
+    }
+    .mini-guide-subtitle {
+      color: var(--ink-soft);
+      font-size: 13px;
+      font-style: italic;
+      margin: 6px 0 0;
+    }
+    .mini-guide-box > summary::after {
+      content: "▾";
+      color: var(--c3-b);
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 1;
+      transition: transform 0.2s ease;
+    }
+    .mini-guide-box[open] > summary::after {
+      transform: rotate(180deg);
+    }
+    .mini-guide-box .mini-guide {
+      margin-top: 10px;
+    }
+    .mini-guide {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+    .mini-guide span {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--ink-soft);
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .mini-guide span::before {
+      content: "";
+      display: inline-block;
+      width: 14px;
+      height: 2px;
+      background: var(--ink-soft);
+      flex-shrink: 0;
+    }
+    .fixed-bottom-bar {
+      display: none;
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: 10px 18px calc(10px + env(safe-area-inset-bottom));
+      background: linear-gradient(to top, var(--bg) 60%, transparent);
+      z-index: 40;
+    }
+    .fixed-bottom-bar.visible {
+      display: block;
+    }
+    .fixed-bottom-bar .nav-button {
+      max-width: 604px;
+      margin: 0 auto;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+    }
+    .page-label-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .page-label-row .page-label {
+      margin-bottom: 0;
+    }
+    .page-label-row h2 {
+      margin: 0;
+    }
+    .back-link-top {
+      display: inline-flex;
+      align-items: center;
+      background: none;
+      border: none;
+      color: var(--ink-soft);
+      font-size: 14px;
+      font-family: 'Hanken Grotesk', sans-serif;
+      padding: 0;
+      margin-bottom: 10px;
+      cursor: pointer;
+    }
+    .back-link-top:hover {
+      color: var(--ink);
+    }
+    .top-nav-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .top-nav-row .nav-button {
+      margin-top: 0;
+      width: auto;
+      padding: 8px 20px;
+      font-size: 14px;
+    }
+
+    .frame-wrap {
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid var(--rule);
+      margin-top: 6px;
+    }
+    iframe {
+      width: 100%;
+      border: none;
+      display: block;
+      min-height: 400px;
+    }
+
+    .nav-button, .popup-button {
+      display: block;
+      width: 100%;
+      padding: 16px;
+      font-family: 'Hanken Grotesk', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--ink);
+      background: var(--yellow);
+      border: none;
+      border-radius: 14px;
+      cursor: pointer;
+      margin-top: 20px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+      transition: background 0.15s ease, transform 0.15s ease;
+    }
+    .nav-button:hover, .popup-button:hover { background: #f7d271; transform: translateY(-1px); }
+    .nav-button:disabled {
+      background: var(--rule);
+      color: var(--ink-soft);
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+    .nav-button:disabled:hover {
+      background: var(--rule);
+      transform: none;
+    }
+    .nav-button:focus-visible, .popup-button:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+    }
+    .back-link {
+      display: inline-block;
+      margin-top: 14px;
+      font-size: 14px;
+      color: var(--ink-soft);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px 0;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    .back-link:hover { color: var(--ink); }
+    .secondary-button {
+      display: block;
+      width: 100%;
+      padding: 15px;
+      font-family: 'Hanken Grotesk', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--ink);
+      background: transparent;
+      border: 1.5px solid var(--rule);
+      border-radius: 14px;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: background 0.15s ease, border-color 0.15s ease;
+    }
+    .secondary-button:hover {
+      background: rgba(24,24,27,0.04);
+      border-color: var(--ink-soft);
+    }
+    .secondary-button:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+    }
+
+    /* Erinnerungs-Popup */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(24,24,27,0.45);
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 100;
+    }
+    .modal-backdrop.open {
+      display: flex;
+    }
+    .modal-card {
+      background: var(--bg);
+      border-radius: 18px;
+      padding: 24px;
+      max-width: 420px;
+      width: 100%;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.18);
+      animation: pop-in 0.25s ease;
+    }
+    @keyframes pop-in {
+      from { opacity: 0; transform: scale(0.96) translateY(4px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .modal-card { animation: none; }
+    }
+    .checkbox-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-top: 14px;
+      font-size: 14px;
+      color: var(--ink);
+      cursor: pointer;
+    }
+    .checkbox-row input {
+      width: 18px;
+      height: 18px;
+      margin-top: 1px;
+      accent-color: var(--yellow);
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+    .nav-button:disabled {
+      background: var(--rule);
+      color: var(--ink-soft);
+      cursor: not-allowed;
+    }
+
+    @media (min-width: 700px) {
+      body { padding: 56px 20px 80px; }
+      h1 { font-size: 32px; }
+      iframe { min-height: 600px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="topHeader">
+    <div class="eyebrow">Nutzerstudie &middot; Masterarbeit</div>
+    <h1>Nutzerstudie: KI-Assistenz für Gesetze</h1>
+  </div>
+
+  <div class="progress" id="progress"></div>
+
+  <!-- ================= Seite 1: Willkommen ================= -->
+  <section class="page active" data-page="1" style="--dot-color: var(--c1-b); padding-bottom: 80px;">
+    <div class="page-label-row">
+      <div class="page-label" style="background: var(--c1); border-color: var(--c1-b); color: var(--c1-t)">1</div>
+      <h2>Willkommen</h2>
+    </div>
+    <p class="lead">Danke, dass du dir Zeit nimmst!</p>
+    <p>Du nutzt gleich eine KI-Assistenz, die neue Gesetze erklärt. Im Anschluss beantwortest du noch ein paar Fragen zu deiner Erfahrung damit &ndash; es geht dabei nicht um Wissen oder Inhalte, sondern nur um deinen Eindruck.</p>
+    <span class="time-badge">ca. 15 Minuten</span>
+  </section>
+
+  <!-- ================= Seite 2: Datenschutz ================= -->
+  <section class="page datenschutz-page" data-page="2" style="--dot-color: var(--c2-b); padding-bottom: 80px;">
+    <button class="back-link-top" onclick="goTo(1)">‹ Zurück zur Begrüßung</button>
+    <div class="page-label-row">
+      <div class="page-label" style="background: var(--c2); border-color: var(--c2-b); color: var(--c2-t)">2</div>
+      <h2>Infos zum Datenschutz</h2>
+    </div>
+    <p style="font-size: 13px; color: var(--ink-soft); margin-bottom: 14px;">Klick dich einmal durch, dann geht's weiter.</p>
+    <div class="ds-scrollbox" id="dsScrollBox">
+      <div class="ds-line-row">
+        <div class="ds-line-track"></div>
+        <div class="ds-line-fill" id="dsLineFill"></div>
+        <button class="ds-dot" data-idx="0" aria-label="Punkt 1">1</button>
+        <button class="ds-dot" data-idx="1" aria-label="Punkt 2">2</button>
+        <button class="ds-dot" data-idx="2" aria-label="Punkt 3">3</button>
+      </div>
+      <div class="ds-card-viewport">
+        <div class="ds-card-track" id="dsCardTrack">
+          <div class="ds-card-item">
+            <p class="mini-heading">Wer und wofür</p>
+            <p>Ich bin Valerie Pfeiffer, Master-Studentin an der HAW Hamburg. Deine Daten nutze ich nur für diese Masterarbeit und stelle sie dort anonymisiert dar.</p>
+          </div>
+          <div class="ds-card-item">
+            <p class="mini-heading">Kontaktdaten und Rechte</p>
+            <p>Deine Kontaktdaten nutze ich ausschließlich für ein mögliches, freiwilliges Nachgespräch. Deine Teilnahme ist freiwillig, du kannst sie jederzeit abbrechen und die Löschung deiner Daten verlangen (valerie.pfeiffer@haw-hamburg.de).</p>
+          </div>
+          <div class="ds-card-item">
+            <p class="mini-heading">Speicherdauer</p>
+            <p>Deine Daten werden bis zum Abschluss der Arbeit gespeichert. Die Zustimmung dazu bestätigst du am Ende der Befragung.</p>
+          </div>
+        </div>
+      </div>
+      <div class="ds-card-nav">
+        <button class="ds-arrow" id="dsPrev" aria-label="Zurück">‹ Zurück</button>
+        <button class="nav-button" id="dsNext" style="margin-top: 0; margin-left: auto; width: auto; padding: 8px 20px;">Weiter</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= Seite 3: So gehst du vor ================= -->
+  <section class="page" data-page="3" style="--dot-color: var(--c3-b); padding-bottom: 80px;">
+    <button class="back-link-top" onclick="goTo(2)">‹ Zurück zu Datenschutz</button>
+    <div class="page-label-row">
+      <div class="page-label" style="background: var(--c3); border-color: var(--c3-b); color: var(--c3-t)">3</div>
+      <h2>So gehst du vor</h2>
+    </div>
+    <div class="anleitung-box mini-stepper stepper-stable" data-final-label="Los geht's" data-final-goto="4" data-arrow-back="true">
+      <div class="stepper-dots"></div>
+      <div class="stepper-card" data-step="1">
+        <p class="mini-heading">Briefing</p>
+        <p>Auf der nächsten Seite ist eine Website eingebettet, auf der neue Gesetze verständlich erklärt werden sollen.</p>
+      </div>
+      <div class="stepper-card" data-step="2" style="display: none;">
+        <p class="mini-heading">Schritt 1</p>
+        <p>Als erstes wählst du eines der vorgeschlagenen Themen aus.</p>
+        <img src="images/themenauswahl.png" alt="Themenauswahl mit sechs Themen-Buttons" class="howto-image-compact howto-image-wide">
+      </div>
+      <div class="stepper-card" data-step="3" style="display: none;">
+        <p class="mini-heading">Schritt 2</p>
+        <p>Tippe dann auf „KI-Assistenz starten“ und stimme den Nutzungsbedingungen zu.</p>
+        <div class="howto-inline">
+          <img src="images/button-ki-assistenz.png" alt="KI-Assistenz starten Button" class="howto-image-compact">
+          <img src="images/menu-icon.png" alt="Menü-Symbol oben links" class="howto-image-compact howto-image-tiny">
+          <span class="howto-caption">Unten links auf der Seite, oder über das Menü → „Chatten mit KI-Assistenz“</span>
+        </div>
+      </div>
+      <div class="stepper-card" data-step="4" style="display: none;">
+        <p class="mini-heading">Schritt 3</p>
+        <p>Frag drauflos &ndash; schriftlich oder gesprochen. Es gibt kein richtig oder falsch und kein Zeitlimit.</p>
+      </div>
+      <div class="stepper-card" data-step="5" style="display: none;">
+        <p class="mini-heading">Schritt 4</p>
+        <p><span class="tag-wichtig">Wichtig</span></p>
+        <p>Lade am Ende der Nutzung dein Chatprotokoll herunter.</p>
+        <div class="howto-inline">
+          <img src="images/button-download.png" alt="Gespraech als Text herunterladen Button" class="howto-image-compact">
+          <span class="howto-caption">Den Button findest du unten mittig in der Anwendung.</span>
+        </div>
+      </div>
+      <div class="stepper-card" data-step="6" style="display: none;">
+        <p class="mini-heading">Schritt 5</p>
+        <p>Beantworte zum Schluss die Fragen im Umfrageformular.</p>
+        <p><span class="tag-hinweis">Hinweis</span></p>
+        <p style="font-style: italic;">Diese Anleitung findest du auf der nächsten Seite auch nochmal direkt über dem Chatfenster.</p>
+      </div>
+      <div class="stepper-nav">
+        <button class="ds-arrow stepper-prev" style="visibility: hidden;">‹ Zurück</button>
+        <button class="nav-button stepper-next-btn stepper-next" style="margin-top: 0; margin-left: auto; width: auto; padding: 8px 20px;">Weiter</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= Seite 4: Chatbot ================= -->
+  <section class="page" data-page="4" style="--dot-color: var(--c4-b); padding-bottom: 20px;">
+    <div class="page-label-row">
+      <div class="page-label" style="background: var(--c4); border-color: var(--c4-b); color: var(--c4-t)">4</div>
+      <h2>KI-Assistenz ausprobieren</h2>
+    </div>
+    <div class="page4-top-row">
+      <details class="anleitung-box mini-guide-box">
+      <summary class="mini-heading">Anleitung</summary>
+      <div class="mini-stepper mini-stepper-compact" data-simple-back="true">
+      <div class="stepper-dots"></div>
+      <div class="stepper-card" data-step="1">
+        <p class="mini-heading">Schritt 1</p>
+        <p>Scrolle etwas nach unten und Wähle ein Thema aus, das dich interessiert.</p>
+        <details class="howto-toggle-simple">
+          <summary>Wo finde ich die Themen?</summary>
+          <img src="images/themenauswahl.png" alt="Themenauswahl mit sechs Themen-Buttons" class="howto-image-compact howto-image-wide">
+        </details>
+      </div>
+      <div class="stepper-card" data-step="2" style="display: none;">
+        <p class="mini-heading">Schritt 2</p>
+        <p>Tippe auf „KI-Assistenz starten“ und stimme den Nutzungsbedingungen zu.</p>
+        <details class="howto-toggle-simple">
+          <summary>Wo genau ist der Button?</summary>
+          <div class="howto-inline">
+            <img src="images/button-ki-assistenz.png" alt="KI-Assistenz starten Button" class="howto-image-compact">
+            <img src="images/menu-icon.png" alt="Menü-Symbol oben links" class="howto-image-compact howto-image-tiny">
+            <span class="howto-caption"> Den Button findest du unten links auf der Seite, oder über das Menü → „Chatten mit KI-Assistenz“</span>
+          </div>
+        </details>
+      </div>
+      <div class="stepper-card" data-step="3" style="display: none;">
+        <p class="mini-heading">Schritt 3</p>
+        <p>Frag drauflos &ndash; schriftlich oder gesprochen. Es gibt kein richtig oder falsch und kein Zeitlimit.</p>
+      </div>
+      <div class="stepper-card" data-step="4" style="display: none;">
+        <p class="mini-heading">Schritt 4</p>
+        <p><span class="tag-wichtig">Wichtig</span> Lade am Ende dein Chatprotokoll herunter.</p>
+        <details class="howto-toggle-simple">
+          <summary>Wo genau ist der Button?</summary>
+          <div class="howto-inline">
+            <img src="images/button-download.png" alt="Gespraech als Text herunterladen Button" class="howto-image-compact">
+            <span class="howto-caption">Unten mittig in der Anwendung</span>
+          </div>
+        </details>
+      </div>
+      <div class="stepper-card" data-step="5" style="display: none;">
+        <p class="mini-heading">Schritt 5</p>
+        <p>Beantworte die Fragen im Umfrageformular.</p>
+      </div>
+      <div class="stepper-nav">
+        <button class="back-link stepper-prev" style="visibility: hidden;">Zurück</button>
+        <button class="nav-button stepper-next-btn stepper-next">Weiter</button>
+      </div>
+      </div>
+      </details>
+      <button class="nav-button" onclick="openReminder()" style="margin-top: 0; width: auto; padding: 10px 18px; font-size: 15px;">Ich bin fertig</button>
+    </div>
+    <div class="frame-wrap">
+      <iframe
+        id="chatbotFrame"
+        src="https://wasgehtmichdasan.wdr.de#themen"
+        allow="microphone; camera; autoplay"
+        title="Chatbot">
+      </iframe>
+    </div>
+  </section>
+
+  <div class="fixed-bottom-bar" id="fixedBottomBar">
+    <button class="nav-button" id="fixedBottomBtn"></button>
+  </div>
+
+  <div class="fixed-bottom-bar" id="fixedFormularBar">
+    <button
+      class="popup-button"
+      data-tally-open="pbYxDV"
+      data-tally-layout="modal"
+      data-tally-width="700"
+      data-tally-auto-close="3000">
+      Formular öffnen
+    </button>
+  </div>
+
+  <!-- ================= Seite 5: Formular ================= -->
+  <section class="page" data-page="5" style="--dot-color: var(--c6-b); padding-bottom: 80px;">
+    <div class="page-label" style="background: var(--c6); border-color: var(--c6-b); color: var(--c6-t)">5</div>
+    <div id="formularVorher">
+      <h2>Umfrageformular ausfüllen</h2>
+      <p>Das Formular öffnet sich gleich automatisch. Falls nicht, tippe unten auf den Button.</p>
+    </div>
+    <div id="formularFertig" style="display: none;">
+      <h2>Alles angekommen ✅</h2>
+      <p>Du kannst diese Seite jetzt einfach schließen.</p>
+      <p style="font-size: 14px; color: var(--ink-soft);">Nochmal danke fürs Mitmachen &ndash; ich wünsche dir noch einen schönen Tag!</p>
+    </div>
+  </section>
+
+  <!-- ================= Smartphone-Popup ================= -->
+  <div class="modal-backdrop open" id="mobileBackdrop">
+    <div class="modal-card">
+      <p style="margin-bottom: 10px;">📱 <span class="tag-hinweis">Hinweis</span></p>
+      <p>Bitte nutze für diese Umfrage dein Smartphone.</p>
+      <button class="nav-button" onclick="document.getElementById('mobileBackdrop').classList.remove('open')">Alles klar!</button>
+    </div>
+  </div>
+
+  <!-- ================= Erinnerungs-Popup ================= -->
+
+  <div class="modal-backdrop" id="reminderBackdrop">
+    <div class="modal-card">
+      <span class="tag-wichtig" style="margin-bottom: 10px;">Wichtig</span>
+      <h2>Bevor es weitergeht</h2>
+      <p>Nutze im Chatbot das Herunterladen-Symbol, um dein Gespräch als Datei zu sichern. Die Datei brauchst du gleich für das Formular.</p>
+      <p style="margin-bottom: 4px;"><span class="tag-hinweis">Hinweis</span></p>
+      <p style="font-size: 13px; font-style: italic; color: var(--ink-soft);">Die KI kann eventuell noch ein paar Sekunden nachsprechen, das ist normal &ndash; du brauchst darauf nicht zu reagieren.</p>
+      <label class="checkbox-row">
+        <input type="checkbox" id="downloadCheckbox" onchange="toggleContinueButton()">
+        <span>Ja, ich habe das Chatprotokoll heruntergeladen.</span>
+      </label>
+      <button class="nav-button" id="continueButton" onclick="closeReminder(true)" disabled>Weiter zum Formular</button>
+      <button class="secondary-button" onclick="closeReminder(false)">Zurück zum Chatbot</button>
+    </div>
+  </div>
+
+  <script>
+    const totalPages = 5;
+
+    function buildProgress() {
+      const container = document.getElementById('progress');
+      container.innerHTML = '';
+      for (let i = 1; i <= totalPages; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'dot';
+        dot.dataset.dot = i;
+        container.appendChild(dot);
+      }
+    }
+
+    const pageButtonConfig = {
+      1: { label: 'Weiter', onclick: () => goTo(2) }
+    };
+
+    function goTo(pageNum) {
+      document.getElementById('topHeader').style.display = (pageNum === 1) ? 'block' : 'none';
+      document.querySelectorAll('.page').forEach(p => {
+        p.classList.toggle('active', parseInt(p.dataset.page) === pageNum);
+      });
+      document.querySelectorAll('.dot').forEach(d => {
+        const n = parseInt(d.dataset.dot);
+        d.classList.toggle('active', n === pageNum);
+        d.classList.toggle('visited', n < pageNum);
+        if (n === pageNum) {
+          const activePage = document.querySelector('.page[data-page="' + pageNum + '"]');
+          d.style.setProperty('--dot-color', getComputedStyle(activePage).getPropertyValue('--dot-color'));
+        }
+      });
+
+      const genericBar = document.getElementById('fixedBottomBar');
+      const formularBar = document.getElementById('fixedFormularBar');
+      const cfg = pageButtonConfig[pageNum];
+      if (cfg) {
+        const btn = document.getElementById('fixedBottomBtn');
+        btn.textContent = cfg.label;
+        btn.onclick = cfg.onclick;
+        genericBar.classList.add('visible');
+      } else {
+        genericBar.classList.remove('visible');
+      }
+      formularBar.classList.toggle('visible', pageNum === 5);
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      if (pageNum === 4) {
+        // kurze Verzögerung, damit die Seite erst fertig gescrollt/
+        // gerendert ist, bevor wir die verfügbare Höhe messen
+        setTimeout(sizeChatbotFrame, 50);
+      }
+    }
+
+    function sizeChatbotFrame() {
+      const iframe = document.getElementById('chatbotFrame');
+      const wrap = iframe.closest('.frame-wrap');
+      if (!wrap) return;
+      const rect = wrap.getBoundingClientRect();
+      const reserveBelow = 16; // nur noch etwas Sicherheitsabstand am unteren Rand
+      const available = window.innerHeight - rect.top - reserveBelow;
+      iframe.style.height = Math.max(400, available) + 'px';
+    }
+
+    window.addEventListener('resize', () => {
+      const page4 = document.querySelector('.page[data-page="4"]');
+      if (page4 && page4.classList.contains('active')) {
+        sizeChatbotFrame();
+      }
+    });
+
+    // Hinweis: Höhenanpassung des Chatbots bei Kartenwechsel passiert
+    // direkt im Stepper-Code weiter unten (ruft resizeIfPage4Active auf).
+    function resizeIfPage4Active() {
+      const page4 = document.querySelector('.page[data-page="4"]');
+      if (page4 && page4.classList.contains('active')) {
+        setTimeout(sizeChatbotFrame, 50);
+      }
+    }
+
+    const page4GuideBox = document.querySelector('.page[data-page="4"] details.mini-guide-box');
+    if (page4GuideBox) {
+      page4GuideBox.addEventListener('toggle', resizeIfPage4Active);
+    }
+
+    const chatbotSrc = "https://wasgehtmichdasan.wdr.de";
+
+    function stopChatbotFrame() {
+      document.getElementById('chatbotFrame').src = 'about:blank';
+    }
+
+    function startChatbotFrame() {
+      document.getElementById('chatbotFrame').src = chatbotSrc;
+    }
+
+    function openReminder() {
+      document.getElementById('reminderBackdrop').classList.add('open');
+    }
+
+    function toggleContinueButton() {
+      const checked = document.getElementById('downloadCheckbox').checked;
+      document.getElementById('continueButton').disabled = !checked;
+    }
+
+    function closeReminder(proceed) {
+      document.getElementById('reminderBackdrop').classList.remove('open');
+      if (proceed) {
+        // Erst JETZT, nachdem der Download bestätigt wurde, die
+        // Chatbot-Verbindung (inkl. Mikrofon) wirklich beenden.
+        stopChatbotFrame();
+        goTo(5);
+        // Formular automatisch öffnen (innerhalb desselben Klicks, 
+        // damit Browser-Popup-Blocker das nicht verhindern).
+        if (window.Tally && typeof window.Tally.openPopup === 'function') {
+          window.Tally.openPopup('pbYxDV', {
+            layout: 'modal',
+            width: 700,
+            autoClose: 3000
+          });
+        }
+      }
+    }
+
+    window.addEventListener('message', function(event) {
+      if (event.origin !== 'https://tally.so') return;
+      var data = event.data;
+      if (typeof data === 'string') {
+        try {
+          data = JSON.parse(data);
+        } catch (e) {
+          return;
+        }
+      }
+      if (data && data.event === 'Tally.FormSubmitted') {
+        document.getElementById('formularVorher').style.display = 'none';
+        document.getElementById('formularFertig').style.display = 'block';
+        document.getElementById('fixedFormularBar').classList.remove('visible');
+      }
+    });
+
+    // Interaktive Anleitungs-Kartenstapel (mehrfach auf der Seite nutzbar)
+    document.querySelectorAll('.mini-stepper').forEach(stepper => {
+      const cards = stepper.querySelectorAll('.stepper-card');
+      const totalStepperSteps = cards.length;
+      let currentStep = 1;
+
+      const dotsContainer = stepper.querySelector('.stepper-dots');
+      const prevBtn = stepper.querySelector('.stepper-prev');
+      const nextBtn = stepper.dataset.externalNext
+        ? document.getElementById(stepper.dataset.externalNext)
+        : stepper.querySelector('.stepper-next');
+      const finalLabel = stepper.dataset.finalLabel || 'Nochmal von vorn';
+      const finalGoto = stepper.dataset.finalGoto ? parseInt(stepper.dataset.finalGoto) : null;
+
+      for (let i = 1; i <= totalStepperSteps; i++) {
+        const dot = document.createElement('button');
+        dot.className = 'stepper-dot';
+        dot.type = 'button';
+        dot.dataset.step = i;
+        dot.addEventListener('click', () => {
+          currentStep = i;
+          renderStepper();
+          resizeIfPage4Active();
+        });
+        dotsContainer.appendChild(dot);
+      }
+
+      function renderStepper() {
+        cards.forEach(card => {
+          card.style.display = (parseInt(card.dataset.step) === currentStep) ? 'flex' : 'none';
+        });
+        dotsContainer.querySelectorAll('.stepper-dot').forEach(dot => {
+          const n = parseInt(dot.dataset.step);
+          dot.classList.toggle('active', n === currentStep);
+          dot.classList.toggle('done', n < currentStep);
+        });
+        prevBtn.style.visibility = (currentStep === 1) ? 'hidden' : 'visible';
+        if (currentStep > 1 && !stepper.dataset.arrowBack) {
+          if (stepper.dataset.simpleBack) {
+            prevBtn.textContent = 'Zurück';
+          } else {
+            const prevCard = stepper.querySelector('.stepper-card[data-step="' + (currentStep - 1) + '"]');
+            const prevLabel = prevCard ? prevCard.querySelector('.mini-heading').textContent : '';
+            prevBtn.textContent = '‹ zurück zu ' + prevLabel;
+          }
+        }
+        const isLastStep = (currentStep === totalStepperSteps);
+        nextBtn.textContent = isLastStep ? finalLabel : 'Weiter';
+        nextBtn.classList.toggle('ds-next-final', isLastStep && !!finalGoto);
+      }
+
+      nextBtn.addEventListener('click', () => {
+        if (currentStep < totalStepperSteps) {
+          currentStep += 1;
+          renderStepper();
+        } else if (finalGoto) {
+          goTo(finalGoto);
+        } else {
+          currentStep = 1;
+          renderStepper();
+        }
+        resizeIfPage4Active();
+      });
+      prevBtn.addEventListener('click', () => {
+        if (currentStep > 1) {
+          currentStep -= 1;
+          renderStepper();
+          resizeIfPage4Active();
+        }
+      });
+
+      renderStepper();
+    });
+
+    // Lesefortschritts-Linie auf der Datenschutz-Seite
+    // Datenschutz als Kartenprinzip mit horizontalem Wisch-Übergang
+    (function() {
+      const track = document.getElementById('dsCardTrack');
+      if (!track) return;
+      const cards = track.querySelectorAll('.ds-card-item');
+      const dots = document.querySelectorAll('.ds-dot');
+      const fill = document.getElementById('dsLineFill');
+      const prevBtn = document.getElementById('dsPrev');
+      const nextBtn = document.getElementById('dsNext');
+      const total = cards.length;
+      let current = 0;
+
+      function render() {
+        track.style.transform = 'translateX(-' + (current * 100) + '%)';
+        dots.forEach((dot, i) => {
+          dot.classList.toggle('active', i === current);
+          dot.classList.toggle('passed', i < current);
+        });
+        const fillPercent = total > 1 ? current / (total - 1) : 1;
+        const lineRow = fill.closest('.ds-line-row');
+        const trackWidth = lineRow ? lineRow.offsetWidth - 22 : 0;
+        fill.style.width = (trackWidth * fillPercent) + 'px';
+        prevBtn.style.visibility = (current === 0) ? 'hidden' : 'visible';
+        nextBtn.textContent = (current === total - 1) ? 'Alles klar' : 'Weiter';
+      }
+
+      prevBtn.addEventListener('click', () => {
+        if (current > 0) {
+          current -= 1;
+          render();
+        }
+      });
+      nextBtn.addEventListener('click', () => {
+        if (current < total - 1) {
+          current += 1;
+          render();
+        } else {
+          goTo(3);
+        }
+      });
+      dots.forEach((dot, i) => {
+        dot.addEventListener('click', () => {
+          current = i;
+          render();
+        });
+      });
+
+      render();
+    })();
+
+    buildProgress();
+    goTo(1);
+  </script>
+
+</body>
+</html>
